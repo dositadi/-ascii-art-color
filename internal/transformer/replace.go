@@ -2,10 +2,11 @@ package transformer
 
 import "strings"
 
-func (t *Transformer) ReplaceWithNewLine(input string) string {
+func (t *Transformer) ReplaceWithNewLine(input string) []string {
 	if input == "" {
-		return ""
+		return nil
 	}
-	output := strings.ReplaceAll(input, "\\n", "\n")
+	output := strings.Split(input, "\\n")
+
 	return output
 }

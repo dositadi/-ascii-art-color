@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (t *Transformer) ReadCharFromFont(char rune, color string, font string) ([]string, error) {
+func (t *Transformer) readCharFromFont(char rune, color string, font string) ([]string, error) {
 	var path string
 	var output []string
 

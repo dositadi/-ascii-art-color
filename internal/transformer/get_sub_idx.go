@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func (t *Transformer) GetAllSubstringStartIndex(input, sub string) []int {
+func (t *Transformer) getAllSubstringStartIndex(input, sub string) []int {
 	var output []int
 	actualIndex := 0
 	offset := 0

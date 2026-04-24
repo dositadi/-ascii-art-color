@@ -1,19 +1,15 @@
 package api
 
 import (
-	"fmt"
-
 	"acad.learn2earn.ng/git/dositadi/ascii-art-color/internal/transformer"
 )
 
 type Transformer interface {
-	GetInput() (string, string, string, string)
-	GetAnsiiColor(color string) string
-	ReplaceWithNewLine(input string) string
-	GetAllSubstringStartIndex(input, sub string) []int
-	ReadCharFromFont(char rune, color string, font string) ([]string, error)
-	ConvertToAscii(input, sub, color, font string, idxs []int) ([][]string, error)
-	PrintAsciiOnTerminal(input [][]string)
+	GetInput() []string
+	ReplaceWithNewLine(input string) []string
+	TransformTextWithColor(input []string, sub, color, font string) ([][][]string, error)
+	TransformTextWithoutColor(input []string, font string) ([][][]string, error)
+	PrintAsciiOnTerminal(input [][][]string)
 }
 
 type App struct {
@@ -26,19 +22,41 @@ func (a *App) Run() {
 }
 
 func (a *App) Transform() {
-	color, substring, text, font := a.Transformer.GetInput()
+	parameters := a.Transformer.GetInput()
 
-	fmt.Println(color, substring, text, font)
+	if parameters == nil {
+		return
+	}
 
+	if len(parameters) == 4 {
+		a.printWithColor(parameters[0], parameters[1], parameters[2], parameters[3])
+	} else if len(parameters) == 2 {
+		a.PrintWithoutColor(parameters[0], parameters[1])
+	} else {
+		transformer.PrintUsage()
+	}
+}
+
+func (a *App) printWithColor(color, substring, text, font string) {
 	cleanedText := a.Transformer.ReplaceWithNewLine(text)
 
-	idxs := a.Transformer.GetAllSubstringStartIndex(cleanedText, substring)
-
-	asciiWords, err := a.Transformer.ConvertToAscii(cleanedText, substring, color, font, idxs)
+	asciiText, err := a.Transformer.TransformTextWithColor(cleanedText, substring, color, font)
 	if err != nil {
 		transformer.PrintUsage()
 		return
 	}
 
-	a.Transformer.PrintAsciiOnTerminal(asciiWords)
+	a.Transformer.PrintAsciiOnTerminal(asciiText)
+}
+
+func (a *App) PrintWithoutColor(text, font string) {
+	cleanedText := a.Transformer.ReplaceWithNewLine(text)
+
+	asciiText, err := a.Transformer.TransformTextWithoutColor(cleanedText, font)
+	if err != nil {
+		transformer.PrintUsage()
+		return
+	}
+
+	a.Transformer.PrintAsciiOnTerminal(asciiText)
 }

@@ -1,6 +1,6 @@
 package transformer
 
-func (t *Transformer) ConvertToAscii(input, sub, color, font string, idxs []int) ([][]string, error) {
+func (t *Transformer) convertToAsciiWithColor(input, sub, color, font string, idxs []int) ([][]string, error) {
 	var output [][]string
 	i := 0
 
@@ -22,7 +22,7 @@ func (t *Transformer) ConvertToAscii(input, sub, color, font string, idxs []int)
 
 		if check {
 			for k := i; k < i+len(sub); k++ {
-				asciiChar, err := t.ReadCharFromFont(rune(input[k]), color, font)
+				asciiChar, err := t.readCharFromFont(rune(input[k]), color, font)
 				if err != nil {
 					return nil, err
 				}
@@ -31,7 +31,7 @@ func (t *Transformer) ConvertToAscii(input, sub, color, font string, idxs []int)
 
 			i += len(sub)
 		} else {
-			asciiChar, err := t.ReadCharFromFont(rune(input[i]), "", font)
+			asciiChar, err := t.readCharFromFont(rune(input[i]), "", font)
 			if err != nil {
 				return nil, err
 			}
