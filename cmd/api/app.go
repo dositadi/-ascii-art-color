@@ -7,9 +7,13 @@ import (
 )
 
 type Transformer interface {
-	GetInput() (string, string, string, string) /*
-		CheckThatSubExists(input string, substring string) bool */
+	GetInput() (string, string, string, string)
 	GetAnsiiColor(color string) string
+	ReplaceWithNewLine(input string) string
+	GetAllSubstringStartIndex(input, sub string) []int
+	ReadCharFromFont(char rune, color string, font string) ([]string, error)
+	ConvertToAscii(input, sub, color, font string, idxs []int) ([][]string, error)
+	PrintAsciiOnTerminal(input [][]string)
 }
 
 type App struct {
@@ -19,15 +23,22 @@ type App struct {
 func (a *App) Run() {
 	a.Transformer = &transformer.Transformer{}
 	a.Transform()
-	//a.Transformer.CheckThatSubExists("Hello world", "o")
-
-	str := "abc"
-
-	for i := 1; i < len(str); i++ {
-		fmt.Println(string(str[i]) + a.Transformer.GetAnsiiColor("red"))
-	}
 }
 
 func (a *App) Transform() {
-	a.Transformer.GetInput()
+	color, substring, text, font := a.Transformer.GetInput()
+
+	fmt.Println(color, substring, text, font)
+
+	cleanedText := a.Transformer.ReplaceWithNewLine(text)
+
+	idxs := a.Transformer.GetAllSubstringStartIndex(cleanedText, substring)
+
+	asciiWords, err := a.Transformer.ConvertToAscii(cleanedText, substring, color, font, idxs)
+	if err != nil {
+		transformer.PrintUsage()
+		return
+	}
+
+	a.Transformer.PrintAsciiOnTerminal(asciiWords)
 }
